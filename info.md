@@ -1,4 +1,4 @@
-# PetTec (Snoop Cube) for Home Assistant
+# PetTec (Snoop Cube) — csandk Fork for Home Assistant
 
 A minimal Home Assistant integration that adds a **"Feed one portion"** button for the
 [PetTec Cam Buddy](https://pettec.de/products/pettec-cam-buddy-inkl-futterautomat) automatic

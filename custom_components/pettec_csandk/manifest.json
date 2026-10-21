@@ -1,0 +1,17 @@
+{
+  "domain": "pettec_csandk",
+  "name": "PetTec (Snoop Cube) — csandk Fork",
+  "version": "0.2.1",
+  "config_flow": true,
+  "iot_class": "cloud_push",
+  "integration_type": "hub",
+  "requirements": [
+    "pyDes==2.0.1"
+  ],
+  "dependencies": [],
+  "documentation": "https://github.com/csandk/pettec-home-assistant",
+  "issue_tracker": "https://github.com/csandk/pettec-home-assistant/issues",
+  "codeowners": [
+    "@csandk"
+  ]
+}

@@ -625,8 +625,8 @@ class MeariClient:
             {IOT_PROP_PET_FEED2: json.dumps({"parts": portions}, separators=(",", ":"))},
         )
 
-    async def list_feeders_with_retry(self, retries: int = 5) -> list[dict[str, Any]]:
-        """list_feeders() with automatic re-login on 1023 (session bumped).
+    async def list_devices_with_retry(self, retries: int = 5) -> list[dict[str, Any]]:
+        """list_devices() with automatic re-login on 1023 (session bumped).
 
         Meari only allows ONE active session per account. Any second login
         from anywhere — phone, second HA instance, the Snoop Cube web UI —
@@ -637,7 +637,7 @@ class MeariClient:
         import asyncio as _asyncio
         for attempt in range(retries + 1):
             try:
-                return await self.list_feeders()
+                return await self.list_devices()
             except MeariSessionBumpedError:
                 if attempt == retries:
                     raise
@@ -650,7 +650,14 @@ class MeariClient:
                 await self.login()
         return []  # unreachable
 
-    # ---- helper: enumerate feeders ------------------------------------------
+    async def list_feeders_with_retry(self, retries: int = 5) -> list[dict[str, Any]]:
+        """Return only feeders, with the same session recovery as discovery."""
+        return [
+            device for device in await self.list_devices_with_retry(retries)
+            if self.is_feeder(device)
+        ]
+
+    # ---- helpers: enumerate cameras and feeders -----------------------------
 
     @staticmethod
     def is_feeder(device: dict[str, Any]) -> bool:
@@ -663,12 +670,14 @@ class MeariClient:
         caps = cap.get("caps", {}) or {}
         return bool(caps.get("pet")) or bool(caps.get("pfp"))
 
-    async def list_feeders(self) -> list[dict[str, Any]]:
-        """Return all camera devices with feeder capabilities."""
+    async def list_devices(self) -> list[dict[str, Any]]:
+        """Return all cameras and feeders from both device-list buckets."""
         resp = await self.get_device_list()
         out: list[dict[str, Any]] = []
         for bucket in ("ipc", "snap"):
-            for d in resp.get(bucket, []) or []:
-                if self.is_feeder(d):
-                    out.append(d)
+            out.extend(resp.get(bucket) or [])
         return out
+
+    async def list_feeders(self) -> list[dict[str, Any]]:
+        """Return all camera devices with feeder capabilities."""
+        return [device for device in await self.list_devices() if self.is_feeder(device)]

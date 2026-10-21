@@ -15,7 +15,7 @@
       "invalid_auth": "Invalid email or password.",
       "cannot_connect": "Could not reach the PetTec / Meari cloud.",
       "logged_elsewhere": "Meari rejected our session. If the Snoop Cube app is also signed in to this account, log it out (use a dedicated account for HA).",
-      "no_feeders": "Login worked, but no devices were found on this account.",
+      "no_devices": "Login worked, but no cameras or feeders were found on this account.",
       "unknown": "Unexpected error."
     },
     "abort": {

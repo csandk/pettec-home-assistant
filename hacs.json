@@ -1,5 +1,5 @@
 {
-  "name": "PetTec (Snoop Cube)",
+  "name": "PetTec (Snoop Cube) — csandk Fork",
   "render_readme": true,
   "homeassistant": "2024.4.0",
   "iot_class": "cloud_push",

@@ -1,4 +1,4 @@
-# PetTec (Snoop Cube) — Home Assistant integration
+# PetTec (Snoop Cube) — csandk Fork — Home Assistant integration
 
 [![hacs_badge](https://img.shields.io/badge/HACS-Custom-orange.svg)](https://github.com/hacs/integration)
 
@@ -7,6 +7,10 @@ feeder and the rest of the **Snoop Cube** camera lineup (Cam Free, Cam Lite, Cam
 
 The integration talks to PetTec's cloud (the same backend the **Snoop Cube** mobile app
 uses — operated by [Meari](https://www.meari.com.cn/) under the CloudEdge brand).
+
+This is the [csandk fork](https://github.com/csandk/pettec-home-assistant) of
+[woorari/pettec-home-assistant](https://github.com/woorari/pettec-home-assistant).
+Its Home Assistant integration ID is `pettec_csandk`.
 
 ## Status
 
@@ -29,18 +33,29 @@ uses — operated by [Meari](https://www.meari.com.cn/) under the CloudEdge bran
 ### Via HACS (custom repository)
 
 1. In HACS → **Integrations** → top-right ⋮ menu → **Custom repositories**.
-2. Add `https://github.com/woorari/pettec-home-assistant` as **Integration**.
-3. Find **PetTec (Snoop Cube)** in the HACS integrations list and install it.
+2. Add `https://github.com/csandk/pettec-home-assistant` as **Integration**.
+3. Find **PetTec (Snoop Cube) — csandk Fork** in the HACS integrations list and install it.
 4. **Restart Home Assistant.**
-5. **Settings → Devices & Services → Add Integration → "PetTec (Snoop Cube)"**.
+5. **Settings → Devices & Services → Add Integration → "PetTec (Snoop Cube) — csandk Fork"**.
 
 ### Manual
 
-1. Copy `custom_components/pettec/` into your HA config's `custom_components/` directory.
+1. Copy `custom_components/pettec_csandk/` into your HA config's `custom_components/` directory.
 2. Restart HA.
 3. Add the integration via the UI.
 
+### Switching from the original integration
+
+The fork uses a separate integration ID (`pettec_csandk` instead of `pettec`).
+After installing and restarting HA, add **PetTec (Snoop Cube) — csandk Fork**
+as a new integration. Existing configuration entries and entity IDs are not
+automatically migrated. Disable the original integration before configuring the
+fork to avoid competing cloud sessions, and update automations to use the new
+entities.
+
 ## Configuration
+
+Accounts with only cameras, only feeders, or a mix of both are supported.
 
 The config flow asks for:
 
@@ -52,7 +67,7 @@ The config flow asks for:
 | Phone code | no | `49` | Country dialing code, used during login |
 
 > **Strongly recommended:** create a dedicated Snoop Cube account (e.g. `home-assistant@yourdomain`)
-> and use the app's "share device" feature to grant it access to your feeder. Meari
+> and use the app's "share device" feature to grant it access to your cameras or feeders. Meari
 > allows only one active session per account, so if HA and your phone share an
 > account, every login from one bumps the other.
 
@@ -129,7 +144,7 @@ writes.
 
 Feed: IoT property `850` (petFeed2) with payload `{"parts": 1}`.
 Camera on/off: IoT property `118` (sleepMode) — note the inversion, value 0
-means "active". See [`meari_api.py`](custom_components/pettec/meari_api.py)
+means "active". See [`meari_api.py`](custom_components/pettec_csandk/meari_api.py)
 for the full reference.
 
 ## Limitations
@@ -147,7 +162,7 @@ Enable debug logging by adding to your `configuration.yaml`:
 ```yaml
 logger:
   logs:
-    custom_components.pettec: debug
+    custom_components.pettec_csandk: debug
 ```
 
 Restart HA, reproduce the problem, then share the relevant log lines.
@@ -155,6 +170,13 @@ Restart HA, reproduce the problem, then share the relevant log lines.
 ## Contributing
 
 Issues and PRs welcome. The code is intentionally small and well-commented.
+
+Run the regression tests with Python 3.13:
+
+```sh
+python -m pip install -r requirements-test.txt
+python -m pytest tests
+```
 
 ## License
 

@@ -18,6 +18,7 @@ from .const import (
     DEFAULT_COUNTRY_CODE,
     DEFAULT_PHONE_CODE,
     DOMAIN,
+    NAME,
 )
 from .meari_api import MeariApiError, MeariAuthError, MeariClient, MeariSessionBumpedError
 
@@ -63,7 +64,7 @@ class PettecConfigFlow(ConfigFlow, domain=DOMAIN):
             )
             try:
                 await client.login()
-                feeders = await client.list_feeders_with_retry()
+                devices = await client.list_devices_with_retry()
             except MeariAuthError:
                 errors["base"] = "invalid_auth"
             except MeariSessionBumpedError as err:
@@ -76,11 +77,11 @@ class PettecConfigFlow(ConfigFlow, domain=DOMAIN):
                 _LOGGER.exception("Unexpected error during PetTec setup")
                 errors["base"] = "unknown"
             else:
-                if not feeders:
-                    errors["base"] = "no_feeders"
+                if not devices:
+                    errors["base"] = "no_devices"
                 else:
                     return self.async_create_entry(
-                        title=f"PetTec ({email})",
+                        title=f"{NAME} ({email})",
                         data=user_input,
                     )
 

@@ -1,6 +1,7 @@
 """Constants for the PetTec integration."""
 
-DOMAIN = "pettec"
+DOMAIN = "pettec_csandk"
+NAME = "PetTec (Snoop Cube) — csandk Fork"
 
 CONF_EMAIL = "email"
 CONF_PASSWORD = "password"

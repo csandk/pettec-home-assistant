@@ -1,4 +1,4 @@
-"""PetTec (Snoop Cube) integration."""
+"""PetTec (Snoop Cube) — csandk Fork integration."""
 
 from __future__ import annotations
 
@@ -72,10 +72,7 @@ async def async_setup_entry(hass: HomeAssistant, entry: PettecConfigEntry) -> bo
     )
     try:
         await client.login()
-        # Pull the FULL device list (cameras + feeders) so we can attach a
-        # camera-active switch to every device. list_feeders_with_retry uses
-        # the same call internally; do it once here and partition.
-        all_devices = await _fetch_all_devices_with_retry(client)
+        all_devices = await client.list_devices_with_retry()
     except MeariAuthError as err:
         raise ConfigEntryAuthFailed(str(err)) from err
     except MeariSessionBumpedError as err:
@@ -102,31 +99,6 @@ async def async_setup_entry(hass: HomeAssistant, entry: PettecConfigEntry) -> bo
 
     await hass.config_entries.async_forward_entry_setups(entry, PLATFORMS)
     return True
-
-
-async def _fetch_all_devices_with_retry(
-    client: MeariClient, retries: int = 5
-) -> list[dict]:
-    """get_device_list() with the same auto-relog retry as list_feeders."""
-    import asyncio
-    for attempt in range(retries + 1):
-        try:
-            resp = await client.get_device_list()
-            out: list[dict] = []
-            for bucket in ("ipc", "snap"):
-                out.extend(resp.get(bucket) or [])
-            return out
-        except MeariSessionBumpedError:
-            if attempt == retries:
-                raise
-            _LOGGER.info(
-                "PetTec: session bumped (attempt %d/%d) — re-logging in",
-                attempt + 1,
-                retries,
-            )
-            await asyncio.sleep(0.5 + attempt * 0.5)
-            await client.login()
-    return []
 
 
 async def async_unload_entry(hass: HomeAssistant, entry: PettecConfigEntry) -> bool:
